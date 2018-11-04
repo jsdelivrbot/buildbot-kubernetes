@@ -58,10 +58,6 @@ worker:
 
 crossbar:
   enabled: True
-  image:
-    repository: crossbario/crossbar
-    tag: cpy3-18.9.2
-    pullPolicy: IfNotPresent
 
 local_docker:
   enabled: False
