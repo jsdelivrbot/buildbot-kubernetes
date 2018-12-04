@@ -74,18 +74,18 @@ template:
             name: {{ .Release.Name }}-postgresql
             key: postgres-password
 {{- end }}
-{{- if .Values.worker.enabled }}
+{{- if (index .Values "buildbot-worker").enabled }}
       - name: NUM_WORKERS
-        value: "{{ .Values.worker.replicaCount }}"
+        value: "{{ (index .Values "buildbot-worker").replicaCount }}"
       - name: WORKERPASS
         valueFrom:
           secretKeyRef:
-{{- if .Values.worker.password.secret_name}}
-            name: {{ .Values.worker.password.secret_name }}
+{{- if (index .Values "buildbot-worker").password.secret_name}}
+            name: {{ (index .Values "buildbot-worker").password.secret_name }}
 {{- else }}
-            name: {{ template "buildbot.fullname" . }}-worker-secret
+            name: {{ include "buildbot-worker.fullname" (merge .Values.valuesBuildbotWorker .) }}-secret
 {{- end }}
-            key: {{ .Values.worker.password.key }}
+            key: {{ (index .Values "buildbot-worker").password.key }}
 {{- end }}
       ports:
       - name: http
@@ -144,22 +144,18 @@ template:
         mountPath: /var/run/docker.sock
         subPath: docker.sock
 {{- end }}
-  {{- with .Values.master.resources }}
+{{- with .Values.master.resources }}
       resources:
 {{ toYaml . | indent 8 }}
-  {{- end }}
-  {{- with .Values.master.nodeSelector }}
+{{- end }}
+{{- with .Values.master.nodeSelector }}
     nodeSelector:
 {{ toYaml . | indent 8 }}
-  {{- end }}
-  {{- with .Values.master.affinity }}
-    affinity:
-{{ toYaml . | indent 8 }}
-  {{- end }}
-  {{- with .Values.master.tolerations }}
+{{- end }}
+{{- with .Values.master.tolerations }}
     tolerations:
 {{ toYaml . | indent 8 }}
-  {{- end }}
+{{- end }}
 {{- if .Values.local_docker.enabled }}
     - name: docker-dind-worker
       image: "{{ .Values.local_docker.image.repository }}:{{ .Values.local_docker.image.tag }}"
@@ -180,7 +176,7 @@ template:
 {{- if .Values.config.name }}
         name: {{ .Values.config.name }}
 {{- else }}
-        name: {{ .Release.Name }}-master.cfg
+        name: {{ include "buildbot.fullname" . }}-master.cfg
 {{- end }}
         items:
 {{ toYaml .Values.config.items | indent 8 -}}

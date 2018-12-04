@@ -43,18 +43,8 @@ master:
     runAsUser: 945
     fsGroup: 945
 
-worker:
+buildbot-worker:
   enabled: True
-  replicaCount: 2
-  kind: Deployment
-  image:
-    repository: buildbot/buildbot-worker
-    tag: v1.4.0-py3
-    pullPolicy: IfNotPresent
-  password:
-    secret_name:
-    value:
-    key: worker_password
 
 crossbar:
   enabled: True
@@ -123,12 +113,10 @@ config:
        workernames=[worker.name for worker in c['workers']],
        factory=factory)
 
-
 secret:
   extraFileSecret: []
   extraSecret: []
   values: {}
-
 
 db:
   force_url:
@@ -137,3 +125,8 @@ postgresql:
   enabled: True
   postgresUser: buildbot
   postgresDatabase: buildbot
+
+#####
+valuesBuildbotWorker:
+  Chart:
+    Name: buildbot-worker
