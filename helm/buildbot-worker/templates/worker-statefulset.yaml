@@ -2,7 +2,7 @@
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
-  name: {{ include "buildbot-worker.fullname" . }}-worker
+  name: {{ include "buildbot-worker.fullname" . }}
   labels:
     app.kubernetes.io/name: {{ include "buildbot-worker.name" . }}
     helm.sh/chart: {{ include "buildbot-worker.chart" . }}
