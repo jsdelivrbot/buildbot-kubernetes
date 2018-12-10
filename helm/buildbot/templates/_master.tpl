@@ -83,7 +83,7 @@ template:
 {{- if (index .Values "buildbot-worker").password.secret_name}}
             name: {{ (index .Values "buildbot-worker").password.secret_name }}
 {{- else }}
-            name: {{ include "buildbot-worker.fullname" (merge .Values.valuesBuildbotWorker .) }}-secret
+            name: {{ include "buildbot-worker.fullname" (dict .) }}-secret
 {{- end }}
             key: {{ (index .Values "buildbot-worker").password.key }}
 {{- end }}
@@ -183,7 +183,7 @@ template:
 {{- if .Values.secret.values }}
     - name: buildbot-secret
       secret:
-        secretName: {{ .Release.Name }}-secret
+        secretName: {{ include "buildbot.fullname" . }}-secret
         defaultMode: 256
 {{- end }}
 {{- range .Values.secret.extraFileSecret }}

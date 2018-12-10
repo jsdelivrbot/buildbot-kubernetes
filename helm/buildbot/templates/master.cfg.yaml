@@ -47,14 +47,13 @@ data:
         )
         for worker_id in range(int(os.environ.get('NUM_WORKERS', 1)))
     ]
-    {{ merge .Values.valuesBuildbotWorker . }}
 {{- if or .Values.crossbar.forceURL .Values.crossbar.enabled }}
     c['mq'] = {
         'type': 'wamp',
 {{- if .Values.crossbar.forceURL }}
         'router_url': "{{ .Values.crossbar.forceURL }}",
 {{- else }}
-        'router_url': 'ws://{{ include "crossbar.fullname" (merge .Values.valuesCrossbar .) }}:{{ .Values.crossbar.service.port }}/ws',
+        'router_url': 'ws://{{ include "crossbar.fullname" . }}:{{ .Values.crossbar.service.port }}/ws',
 {{- end }}
         'realm': 'realm1',
     }
